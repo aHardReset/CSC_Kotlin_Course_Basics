@@ -36,10 +36,38 @@ fun applySquaredFilter(picture: String): String {
 
 fun applyFilter(picture: String, filterName: String): String {
     return when (filterName) {
-        "borders" -> applyBordersFilter(picture)
-        "squared" -> applySquaredFilter(picture)
+        "borders" -> applyBordersFilter(trimPicture(picture))
+        "squared" -> applySquaredFilter(trimPicture(picture))
         else -> error("Filer not supported")
     }
+}
+
+fun choosePicture(): String {
+    val optionsString = allPictures().joinToString(separator = ", ")
+    var choosen: String
+    do {
+        println(" Please choose a picture. The possible options are: $optionsString")
+        choosen = safeReadLine()
+    } while (choosen !in allPictures())
+    return getPictureByName(choosen) ?: error("Not a valid picture")
+}
+
+fun getPicture(): String {
+    println("Do you want to use a predefined picture or a custom one? Please input 'yes' for a predefined image or 'no' for a custom one")
+    var userInput = safeReadLine()
+    while (userInput != "yes" && userInput != "no") {
+        println("Please input 'yes' or 'no'")
+        userInput = safeReadLine()
+    }
+    return when(userInput) {
+        "yes" -> choosePicture()
+        "no" -> {
+            println("Please input a custom picture (note that only single-line images are supported)")
+            return safeReadLine()
+        }
+        else -> error("bad input")
+    }
+
 }
 
 fun safeReadLine(): String = readlnOrNull() ?: error("Input is null")
@@ -53,8 +81,18 @@ fun chooseFilter(): String{
     return filter
 }
 
+fun photoshop() {
+    val picture = getPicture()
+    val filter = chooseFilter()
+
+    println("The old image:")
+    println(picture)
+    println("The transformed picture:")
+    println(applyFilter(picture, filter))
+}
+
 fun main() {
     // Uncomment this code on the last step of the game
 
-    // photoshop()
+    photoshop()
 }
